@@ -1,0 +1,29 @@
+use starknet::account::Call;
+
+#[starknet::interface]
+trait IAccount<T> {
+  fn is_valid_signature(self: @T, hash: felt252, signature: Array<felt252>) -> felt252;
+}
+
+#[starknet::contract]
+mod Account {
+  use super::Call;
+
+  #[storage]
+  struct Storage {
+    public_key: felt252
+  }
+
+  #[external(v0)]
+  impl AccountImpl for super::IAccount<ContractState> {
+    fn is_valid_signature(self: @ContractState, hash: felt252, signature: Array<felt252>) -> felt252 { ... }
+  }
+
+  // These functions are protocol-specific and not intended for direct external use.
+  #[external(v0)]
+  #[generate_trait]
+  impl ProtocolImpl for ProtocolTrait {
+    fn __execute__(ref self: ContractState, calls: Array<Call>) -> Array<Span<felt252>> { ... }
+    fn __validate__(self: @ContractState, calls: Array<Call>) -> felt252 { ... }
+  }
+}
